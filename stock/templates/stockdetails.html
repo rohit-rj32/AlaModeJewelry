@@ -1,0 +1,56 @@
+{% extends 'base.html'%}
+{% block content %}
+<ul class="nav justify-content-end">
+    <li class="nav-item">
+        <a class="nav-link active" href="#">In Stock</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Out of Stock</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Price High-to-Low</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Price Low-to-High</a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'stockdetails'%}">{% csrf_token %}
+            <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search">
+            <button class="btn btn-light" type="submit">Search</button>
+        </form>
+    </li>
+</ul>
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        {% for x in img %}
+        {% if forloop.first %}
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {%endif%}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!--<img src="{{x.ItemImage.url}}" class="card-img-top" alt="...">-->
+                    <img src="{{x.ItemImage.url}}" height="300" width="250" class="img-thumbnail" alt="...">
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">{{x.ItemName}}</h5>
+                            Price: {{x.ItemPrice}} (Available: {{x.ItemAvailCount}})
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Know More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% if forloop.counter|divisibleby:6 %}
+        </div>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">{% endif %}
+            {% if forloop.last %}
+        </div>
+        {%endif %}
+        {%endfor%}
+    </div>
+</section>
+{% endblock %}

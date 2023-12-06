@@ -39,3 +39,5 @@ class Order(models.Model):
     item = models.ForeignKey(ItemDetails,null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length=50,null=True, choices=STATUS)
+
+#class Expenses(models.Model):
