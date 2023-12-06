@@ -1,0 +1,64 @@
+{% extends 'base.html'%}s
+{% block content %}
+<div class="btn-group">
+    <button type="button" class="btn btn-info">Action</button>
+    <button type="button" class="btn btn-info dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <div class="dropdown-menu">
+        {% for month in xl_months %}
+        <a class="dropdown-item" href="#">{{ month }}</a>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center ext-white mb-3" id="total-order">
+                <div class="card-header">
+                    <h5 class="card-title">Total Orders</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{OrdersCount}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center ext-white mb-3" id="orders-delivered">
+                <div class="card-header">
+                    <h5 class="card-title">Orders Delivered</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{OrdersDelivered}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md">
+            <div class="card text-center ext-white mb-3" id="Order-pending">
+                <div class="card-header">
+                    <h5 class="card-title">Pending Orders</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">{{OrdersPending}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card bg-light ms-4 me-4 mb-4">
+    <div class="card-header">
+        <i class="fa-solid fa-list fa-lg"></i> Recent Orders
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+        <div class="table-responsive">
+            {% autoescape off %}{{ table_content }}{% endautoescape %}
+        </div>
+    </div>
+</div>
+{% endblock %}

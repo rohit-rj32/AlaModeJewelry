@@ -1,0 +1,24 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<h1>Stock Details</h1>
+<div class="container">
+    <hr>
+    {% for x in img %}
+    {% if forloop.first %}
+    <div class="row">{%endif%}
+        <div class="col-lg-2 col-md-4 col-12">
+            <div class="text-center mt-2">
+                <img src="{{x.ItemImage.url}}" height="60%" width="60%" class="img-thumbnail alt=" ...">
+                <h2 class="text-center">{{x.ItemName}}</h2>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:6 %}
+    </div>
+    <div class="row">{% endif %}
+        {% if forloop.last %}
+    </div>
+    {%endif %}
+    {%endfor%}
+</div>
+{% endblock %}

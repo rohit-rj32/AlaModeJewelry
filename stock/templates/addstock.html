@@ -1,0 +1,16 @@
+{% extends 'base.html'%}
+
+{% block content %}
+    <h1>Add New Item to the Stock</h1>
+    <div class="container">
+        <form action="." method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" class="btn btn-secondary">AddItem</button>
+        </form>
+        {% if obj %}
+        <h3>Succesfully Added: {{img_obj.ItemName}}</h3>
+        <img src="{{ obj.ItemImage.url}}" height="70%" width="70%" class="img-thumbnail alt="...">
+        {% endif %}
+    </div>
+{% endblock %}
