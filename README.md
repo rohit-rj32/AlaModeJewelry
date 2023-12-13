@@ -1,2 +1,2 @@
 # AlaModeJewelry
-# Django Web application to show a ecommerce web page.
+# Designing e commerce web page using django web framework
