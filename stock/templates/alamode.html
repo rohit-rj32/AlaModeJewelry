@@ -1,5 +1,44 @@
 {% extends 'base.html'%}
-
 {% block content %}
 <h1> Ala mode home page here!!</h1>
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        {% for x in img %}
+        {% if forloop.first %}
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {%endif%}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!--<img src="{{x.ItemImage.url}}" class="card-img-top" alt="...">-->
+                    <img src="{{x.ItemImage.url}}" height="300" width="250" class="img-thumbnail" alt="...">
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">{{x.ItemName}}</h5>
+                            Price: {{x.ItemPrice}}
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:4 %}
+        </div>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">{% endif %}
+            {% if forloop.last %}
+        </div>
+        {%endif %}
+        {%endfor%}
+    </div>
+</section>
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+</nav>
 {% endblock %}

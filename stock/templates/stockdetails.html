@@ -2,16 +2,13 @@
 {% block content %}
 <ul class="nav justify-content-end">
     <li class="nav-item">
-        <a class="nav-link active" href="#">In Stock</a>
+        <a class="nav-link active" href="#">All</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Out of Stock</a>
+        <a class="nav-link" href="{% url 'stockdetails' %}">In Stock</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Price High-to-Low</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Price Low-to-High</a>
+        <a class="nav-link" href="#">Out-Of-Stock</a>
     </li>
     <li class="nav-item">
         <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'stockdetails'%}">{% csrf_token %}
@@ -20,7 +17,6 @@
         </form>
     </li>
 </ul>
-
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
         {% for x in img %}
@@ -29,7 +25,6 @@
             {%endif%}
             <div class="col mb-5">
                 <div class="card h-100">
-                    <!--<img src="{{x.ItemImage.url}}" class="card-img-top" alt="...">-->
                     <img src="{{x.ItemImage.url}}" height="300" width="250" class="img-thumbnail" alt="...">
                     <div class="card-body p-4">
                         <div class="text-center">
@@ -42,9 +37,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-            {% if forloop.counter|divisibleby:6 %}
+            {% if forloop.counter|divisibleby:4 %}
         </div>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">{% endif %}
             {% if forloop.last %}

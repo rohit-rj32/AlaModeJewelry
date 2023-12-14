@@ -2,20 +2,72 @@
 {% block content %}
 <ul class="nav justify-content-end">
     <li class="nav-item">
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal" hidden>
+            Add Expenses
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{% url 'dashboard' %}" method="post">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="expense-name" class="col-form-label">Expenses Name:</label>
+                                <input type="text" class="form-control" id="expense-name" name="e_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="expense-amount" class="col-form-label">Amount:</label>
+                                <input type="number" class="form-control" id="expense-amount" name="e_amount">
+                            </div>
+                            <div class="form-group">
+                                <select name='e_month'>
+                                    <option>Open this select menu</option>
+                                    {% for month in xl_months %}
+                                    {% if month == month_selection %}
+                                    <option value={{month}} selected>{{month}}</option>
+                                    {% else %}
+                                    <option value={{month}}>{{month}}</option>
+                                    {% endif %}
+                                    <!--    <a class="dropdown-item" onsubmit="" type="selection" name="month" href="{% url 'dashboard'%}">{{ month }}</a>-->
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" data-dismiss="modal">Save Expenses</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item">
         <form action="{% url 'dashboard' %}" method="post">
-        {% csrf_token %}
-        <select name='name_of_select'>
-            <option selected>Open this select menu</option>
-            {% for month in xl_months %}
-            <option value={{month}}>{{month}}</option>
-            <!--    <a class="dropdown-item" onsubmit="" type="selection" name="month" href="{% url 'dashboard'%}">{{ month }}</a>-->
-            {% endfor %}
-        </select>
-        <button class="btn btn-light" type='submit' name="Fetch" >Fetch Data</button>
-    </form>
+            {% csrf_token %}
+            <select name='name_of_select'>
+                {% for month in xl_months %}
+                {% if month == month_selection %}
+                <option value={{month}} selected>{{month}}</option>
+                {% else %}
+                <option value={{month}}>{{month}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <button class="btn btn-secondary" type='submit' name="Fetch">Fetch Data</button>
+        </form>
     </li>
 </ul>
 </br>
+<h1 class="mb-5">Dashboard for the month: {{month_selection}}</h1>
 <!--<div class="btn-group">-->
 <!--    <form class="form-inline my-2 my-lg-0" method="get" action="{% url 'dashboard'%}">{% csrf_token %}-->
 <!--    <button type="button" class="btn btn-info">Action</button>-->
@@ -57,7 +109,7 @@
     </div>
     <div class="col">
         <div class="col-md">
-            <div class="card text-center ext-white mb-3" id="Order-pending">
+            <div class="card text-center ext-white mb-3" id="Total-expenses">
                 <div class="card-header">
                     <h5 class="card-title">Total Expenses</h5>
                 </div>
@@ -69,12 +121,12 @@
     </div>
     <div class="col">
         <div class="col-md">
-            <div class="card text-center ext-white mb-3" id="Order-pending">
+            <div class="card text-center ext-white mb-3" id="Total-profit">
                 <div class="card-header">
-                    <h5 class="card-title">Profit</h5>
+                    <h5 class="card-title">Total Profit</h5>
                 </div>
                 <div class="card-body">
-                    <h3 class="card-title">0</h3>
+                    <h3 class="card-title">{{total_profit}}</h3>
                 </div>
             </div>
         </div>
@@ -82,12 +134,23 @@
 </div>
 <div class="card bg-light ms-4 me-4 mb-4">
     <div class="card-header">
-        <i class="fa-solid fa-list fa-lg"></i> Recent Orders
+        <i class="fa-solid fa-list fa-lg"></i> All Orders
     </div>
     <div class="card-body">
         <p class="card-text">
         <div class="table-responsive" style="max-height:300px;">
-                {% autoescape off %}{{ table_content }}{% endautoescape %}
+            {% autoescape off %}{{ orders_data }}{% endautoescape %}
+        </div>
+    </div>
+</div>
+<div class="card bg-light ms-3 me-3 mb-3">
+    <div class="card-header">
+        <i class="fa-solid fa-list fa-lg"></i> Expenses
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+        <div class="table-responsive" style="max-height:300px;">
+            {% autoescape off %}{{ expenses_data }}{% endautoescape %}
         </div>
     </div>
 </div>

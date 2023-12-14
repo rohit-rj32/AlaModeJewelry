@@ -8,10 +8,10 @@ class ItemDetails(models.Model):
     ItemName = models.CharField(max_length=20, null=True)
     ItemID = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     ItemType = models.CharField(max_length=50)
-    ItemPrice = models.IntegerField(5, null=True)
+    ItemPrice = models.IntegerField(null=True)
     ItemImage = models.ImageField(upload_to="img/%y")
     ItemDescription = models.CharField(max_length=200, null=True, blank=True)
-    ItemAvailCount = models.IntegerField(10, default=0)
+    ItemAvailCount = models.IntegerField(default=0)
 
     def __str__(self):
         return self.ItemName
@@ -36,8 +36,12 @@ class Order(models.Model):
     )
 
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
-    item = models.ForeignKey(ItemDetails,null=True, on_delete=models.SET_NULL)
+    item = models.ForeignKey(ItemDetails, null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length=50,null=True, choices=STATUS)
 
-#class Expenses(models.Model):
+
+class Expenses(models.Model):
+    name = models.CharField(max_length=20, null=True)
+    amount = models.IntegerField(null=True)
+    month = models.CharField(max_length=20, null=True)
