@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from .models import ItemDetails
 from .form import ItemsForm
 import pandas as pd
+from stock.scripts.trackparcel import getcourierdetails
+from openpyxl import load_workbook
+
 
 # Create your views here.
 
@@ -20,8 +23,14 @@ def index(request):
 
 
 def alamode(request):
-    img = ItemDetails.objects.filter(ItemAvailCount__gte=1)
-    return render(request, "alamode.html", {"img": img})
+    items = ItemDetails.objects.filter(ItemAvailCount__gte=1)
+    print(items)
+    return render(request, "alamode.html", {"items": items})
+
+
+def pagedetails(request, slug):
+    items = ItemDetails.objects.filter(ItemSlug__iexact=slug)
+    return render(request, "productdetails.html", {"items": items})
 
 
 def orders(request):
@@ -52,41 +61,62 @@ def stockdetails(request):
     return render(request, "stockdetails.html", {"img": img, "form": form})
 
 
+def write_excel(filename, sheetname, dataframe):
+    with pd.ExcelWriter(filename, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+        workBook = writer.book
+        # try:
+        #     workBook.remove(workBook[sheetname])
+        # except:
+        #     print("Worksheet does not exist")
+        # finally:
+        dataframe.to_excel(writer, sheet_name=sheetname, index=False)
+        writer.save()
+
+
 def dashboard(request):
     xl_months = ("November_2023", "December_2023")
-    # month_selection = request.POST.get("e_month")
-    # expense_amount = request.POST.get("e_amount")
-    # expense_name = request.POST.get("e_name")
-    # print(month_selection)
-    # print(expense_amount)
-    # print(expense_name)
     month_selection = request.POST.get("name_of_select")
-    if month_selection is not None and month_selection in xl_months:
-        df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
-        df_expenses = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet2')
-    else:
-        df = pd.read_excel(r"C:\Users\Rohit\Desktop\December_2023.xlsx", 'Sheet1')
-        df_expenses = pd.read_excel(r"C:\Users\Rohit\Desktop\December_2023.xlsx", 'Sheet2')
+    fetch_tracking = request.POST.get("fetch_tracking")
+    print(fetch_tracking)
+
+    if month_selection is None:
         month_selection = "December_2023"
+
+    if fetch_tracking is not None:
+        print("Fetching the tracking details of the orders")
+        df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
+        df_tmp = df.loc[(df['Status'] == 'Pending')]
+        print(df)
+        for num in df_tmp['TrackingNumber']:
+            result = getcourierdetails(num)
+            print(result)
+            if result == 0:
+                df.loc[df.TrackingNumber == num, 'Status'] = ['Delivered']
+                # df.loc[df['TrackingNumber'].isin(num), 'Status'] = ['Delivered']
+                # with pd.ExcelWriter("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), engine='openpyxl') as writer:
+                #     writer.book = load_workbook("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection))
+                #     writer.save()
+                #     df.to_excel(writer, "Sheet1", cols=['Status'])
+                # df.to_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
+        write_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1', df)
+        print(df)
+        # for row in df.loc[(df['Status'] == 'Pending')]:
+        #     print(row)
+        # if stat != 'Delivered':
+        #    print(df['TrackingNumber'])
+
+    df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
+    df_expenses = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet2')
+
     numOfEarrings, SellP, CostP, ExpenseAmount = df['NumOfEarrings'].sum(), df['SellP'].sum(), df['CostP'].sum(), \
                                                  df_expenses['ExpenseAmount'].sum()
     df.loc[len(df.index)] = ["Total: ", numOfEarrings, "-", "-", "-", CostP, SellP, "-"]
     TotalEarnings, TotalExpenses = SellP - CostP, ExpenseAmount
     total_profit = TotalEarnings - TotalExpenses
-    orders_data = df.to_html(classes='table table-striped table-sm')
+    orders_data = df.to_html(classes='table table-striped table-hover table-bordered')
     expenses_data = df_expenses.to_html(classes='table table-striped table-sm')
     return render(request, "dashboard.html", {"OrdersCount": df.shape[0] - 1, "TotalEarnings": TotalEarnings,
                                               "TotalExpenses": TotalExpenses, "orders_data": orders_data,
                                               "expenses_data": expenses_data, "total_profit": total_profit,
                                               "month_selection": month_selection,
                                               "xl_months": xl_months})
-
-
-# def expenses(request):
-#     month_selection = request.POST.get("expense-month")
-#     expense_amount = request.POST.get("expense-amount")
-#     expense_name = request.POST.get("expense-name")
-#     print(month_selection)
-#     print(expense_amount)
-#     print(expense_name)
-#     return render(request, "dashboard.html", {})

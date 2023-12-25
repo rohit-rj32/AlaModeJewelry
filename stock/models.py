@@ -1,6 +1,9 @@
 from django.db import models
 import uuid
-#from datatime import datetime,date
+from django.utils.text import slugify
+
+
+# from datatime import datetime,date
 # Create your models here.
 
 
@@ -12,9 +15,15 @@ class ItemDetails(models.Model):
     ItemImage = models.ImageField(upload_to="img/%y")
     ItemDescription = models.CharField(max_length=200, null=True, blank=True)
     ItemAvailCount = models.IntegerField(default=0)
+    ItemSlug = models.SlugField(max_length=40, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.ItemName
+
+    def save(self, *args, **kwargs):  # new
+        if not self.ItemSlug:
+            self.ItemSlug = slugify(self.ItemName)
+        return super().save(*args, **kwargs)
 
 
 class Customer(models.Model):
@@ -38,7 +47,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
     item = models.ForeignKey(ItemDetails, null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(auto_now_add=True, null=True)
-    status = models.CharField(max_length=50,null=True, choices=STATUS)
+    status = models.CharField(max_length=50, null=True, choices=STATUS)
 
 
 class Expenses(models.Model):

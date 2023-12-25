@@ -9,4 +9,5 @@ urlpatterns = [
     path('addstock', views.addstock, name="addstock"),
     path('stockdetails', views.stockdetails, name="stockdetails"),
     path('dashboard', views.dashboard, name="dashboard"),
+    path('pagedetails/<slug:slug>/', views.pagedetails, name="pagedetails"),
 ]
