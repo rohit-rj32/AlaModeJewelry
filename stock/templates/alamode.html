@@ -1,6 +1,5 @@
 {% extends 'base.html'%}
 {% block content %}
-<h1> Ala mode home page here!!</h1>
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
         {% for item in items %}
@@ -10,19 +9,30 @@
             <div class="col mb-5">
                 <div class="card h-100">
                     <!--<img src="{{x.ItemImage.url}}" class="card-img-top" alt="...">-->
-                    <img src="{{item.ItemImage.url}}" height="300" width="250" class="img-thumbnail" alt="...">
+                    <img src="/media/{{item.Item_images.first.ItemImage}}" height="300" width="250"
+                         class="img-thumbnail" alt="...">
                     <div class="card-body p-4">
                         <div class="text-center">
-                            <h5 class="fw-bolder">{{item.ItemName}} Price: {{item.ItemPrice}} Slug: {{item.ItemSlug}}</h5>
+                            <h5 class="fw-bolder">{{item.ItemName}}</h5>
+                            <h4 class="fw-bolder">Price: &#x20b9; {{item.ItemPrice}}.00</h4>
                         </div>
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{%url 'pagedetails' item.ItemSlug %}"> Quick View
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     class="bi bi-arrow-up-right-square" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                          d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm5.854 8.803a.5.5 0 1 1-.708-.707L9.243 6H6.475a.5.5 0 1 1 0-1h3.975a.5.5 0 0 1 .5.5v3.975a.5.5 0 1 1-1 0V6.707l-4.096 4.096z"/>
-                                </svg>
-                            </a>
+                            <div class="text-center">
+                                <a class="btn btn-outline-dark mt-auto" href="{%url 'pagedetails' item.ItemSlug %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-arrow-up-right-square" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                              d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm5.854 8.803a.5.5 0 1 1-.708-.707L9.243 6H6.475a.5.5 0 1 1 0-1h3.975a.5.5 0 0 1 .5.5v3.975a.5.5 0 1 1-1 0V6.707l-4.096 4.096z"/>
+                                    </svg>
+                                </a>
+                                <a href="#" data-item="{{item.ItemSlug}}" data-action="add"
+                                   class="btn btn-outline-dark mt-auto update-cart"> <span class="text"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="bi bi-cart"
+                                         viewBox="0 0 16 16">
+                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                    </svg>
+                                </a>
                             </div>
                         </div>
                     </div>

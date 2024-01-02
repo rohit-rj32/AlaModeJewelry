@@ -12,19 +12,30 @@ class ItemDetails(models.Model):
     ItemID = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     ItemType = models.CharField(max_length=50)
     ItemPrice = models.IntegerField(null=True)
-    ItemImage = models.ImageField(upload_to="img/%y")
+    #ItemImage = models.ImageField(upload_to="img/%y")
     ItemDescription = models.CharField(max_length=200, null=True, blank=True)
-    ItemAvailCount = models.IntegerField(default=0)
     ItemSlug = models.SlugField(max_length=40, unique=True, null=True, blank=True)
 
     def __str__(self):
-        return self.ItemName
+        return f"ItemDetails(ItemName={self.ItemName}, ItemID={self.ItemID}, " \
+               f"ItemPrice={self.ItemPrice}, ItemSlug={self.ItemSlug})"
+        #return self.ItemName
 
     def save(self, *args, **kwargs):  # new
         if not self.ItemSlug:
             self.ItemSlug = slugify(self.ItemName)
         return super().save(*args, **kwargs)
 
+
+class ItemColourOptions(models.Model):
+    ItemColors = models.CharField(max_length=50)
+    ItemAvailCount = models.IntegerField(default=0)
+    ItemImage = models.ImageField(upload_to="media/product")
+    Item = models.ForeignKey(ItemDetails, on_delete=models.CASCADE, related_name="Item_images")
+
+    def __str__(self):
+        return f"ItemColourOptions(ItemID={self.Item}, ItemAvailCount={self.ItemAvailCount}, " \
+               f"ItemColors={self.ItemColors}, ItemImage={self.ItemImage})"
 
 class Customer(models.Model):
     name = models.CharField(max_length=50, null=True)

@@ -1,108 +1,168 @@
 {% extends 'base.html'%}
 {% block content %}
-<h1> Product Details page here</h1>
 <section class="section-content padding-y bg">
-    <div class="container">
-
+    <hr>
+    <div class="container my-5">
         <!-- ============================ COMPONENT 1 ================================= -->
-        <div class="card">
-            <div class="row no-gutters">
-                <aside class="col-md-6">
-                    <article class="gallery-wrap">
-                        <div class="img-big-wrap">
-
-                            <div><a href="#"><img src="{{items.ItemImage.url}}"></a></div>
-                        </div> <!-- slider-product.// -->
-                        <div class="thumbs-wrap">
-                            {% for item in items %}
-                            <a href="#" class="item-thumb"> <img src="{{item.ItemImage.url}}" height="300" width="250"></a>
-                            {% endfor %}
-                        </div> <!-- slider-nav.// -->
-                    </article> <!-- gallery-wrap .end// -->
-                </aside>
-                <main class="col-md-6 border-left">
-                    <article class="content-body">
-                        <h2 class="title">{{items.first.ItemName}}</h2>
-                        <div class="rating-wrap my-3">
-                            <ul class="rating-stars">
-                                <li style="width:80%" class="stars-active">
-                                    <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                </li>
-                                <li>
-                                    <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                </li>
-                            </ul>
-                            <small class="label-rating text-muted">132 reviews</small>
-                            <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i> 154 orders
-                            </small>
-                        </div> <!-- rating-wrap.// -->
-
-                        <div class="mb-3">
-                            <var class="price h4">${{items.first.ItemPrice}}.00</var>
-                            <span class="text-muted">/per kg</span>
-                        </div> <!-- price-detail-wrap .// -->
-
-                        <p>{{items.first.ItemDescription}}</p>
-
-                        <dl class="row">
-                            <dt class="col-sm-3">Model#</dt>
-                            <dd class="col-sm-9">Odsy-1000</dd>
-
-                            <dt class="col-sm-3">Color</dt>
-                            <dd class="col-sm-9">Brown</dd>
-
-                            <dt class="col-sm-3">Delivery</dt>
-                            <dd class="col-sm-9">Russia, USA, and Europe</dd>
-                        </dl>
-
-                        <hr>
-                        <div class="form-row">
-                            <div class="form-group col-md flex-grow-0">
-                                <label>Quantity</label>
-                                <div class="input-group mb-3 input-spinner">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-light" type="button" id="button-plus"> +</button>
-                                    </div>
-                                    <input type="text" class="form-control" value="1">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-light" type="button" id="button-minus"> −</button>
-                                    </div>
-                                </div>
-                            </div> <!-- col.// -->
-                            {% if product.size_variant.count %}
-                            <div class="form-group col-md">
-                                <label>Select size</label>
-                                <div class="mt-1">
-                                    {% for size in product.size_variant.all %}
-
-                                    <label class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" name="select_size" checked="" class="custom-control-input">
-                                        <div class="custom-control-label">{{size.size_name}}</div>
-                                    </label>
-
-                                    {% endfor %}
-
-                                </div>
-                            </div>
-                            {% endif %}
-                            <!-- col.// -->
-                        </div> <!-- row.// -->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/pagedetails"> Buy
-                                now</a></div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="main-img">
+                    <img class="img-fluid" src="/media/{{items.Item_images.first.ItemImage}}" alt="ProductS">
+                    <div class="row my-3 previews">
+                        {% for images in items.Item_images.all %}
+                        <div class="col-md-3">
+                            <img class="w-100" src="/media/{{images.ItemImage}}" alt="Sale">
                         </div>
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/pagedetails"> Add to
-                                cart</a></div>
-                        </div>
-                    </article> <!-- product-info-aside .// -->
-                </main> <!-- col.// -->
-            </div> <!-- row.// -->
-        </div> <!-- card.// -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div>
+                    <b>Category: {{items.ItemType}}</b>
+                    <h2>{{items.ItemName}}</h2>
+                </div>
+                <div class="price-area my-4">
+                    <p class="old-price mb-1">
+                        <!--                        <del>{{items.ItemPrice}}</del>-->
+                        <!--                        <span class="old-price-discount text-danger">(20% off)</span></p>-->
+                    <p class="new-price text-bold mb-1"> Price: &#x20b9; {{items.ItemPrice}}.00</p>
+                    <p class="text-secondary mb-1">(Additional Shipping charges may apply on checkout)</p>
+                </div>
+                <div class="buttons d-flex my-5">
+                    <a href="#" class="btn btn-outline-dark mt-auto"> Buy now </a>
+                    <a>&nbsp;&nbsp;</a>
+                    <a data-item="{{items.ItemSlug}}" data-action="add" class="btn btn-outline-dark mt-auto update-cart"> <span class="text">Add to cart</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-cart"
+                             viewBox="0 0 16 16">
+                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                    </a>
+                </div>
+                <div>
+                    <p><b>Product Details:</b></p>
+                    <p>{{items.ItemDescription}}</p>
+                </div>
+                <div>
+                    <p><b>Colour Options:</b>
+                    {% for item in items.Item_images.all %}
+                        {% if item.ItemAvailCount == 0 %}
+                        <s>{{item.ItemColors}},</s>
+                        {% else %}
+                        {{item.ItemColors}},
+                        {% endif %}
+                    {% endfor %}
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        <!-- this code is from abjit ecommer git hub repo -->
+        <!--            <div class="card">-->
+        <!--                <div class="row no-gutters">-->
+        <!--                    <aside class="col-md-6">-->
+        <!--                        <article class="gallery-wrap">-->
+        <!--                            <div class="img-big-wrap">-->
+
+        <!--                                <div><a href="#"><img src="/media/{{items.Item_images.first.ItemImage}}" width="554px"-->
+        <!--                                                      height="766px"></a></div>-->
+        <!--                            </div> &lt;!&ndash; slider-product.// &ndash;&gt;-->
+        <!--                            <div class="thumbs-wrap">-->
+        <!--                                {% for images in items.Item_images.all %}-->
+        <!--                                <a href="#" class="item-thumb"> <img src="/media/{{images.ItemImage}}" width="79px"-->
+        <!--                                                                     height="79px"></a>-->
+        <!--                                {% endfor %}-->
+        <!--                            </div> &lt;!&ndash; slider-nav.// &ndash;&gt;-->
+        <!--                        </article> &lt;!&ndash; gallery-wrap .end// &ndash;&gt;-->
+        <!--                    </aside>-->
+        <!--                    <main class="col-md-6 border-left">-->
+        <!--                        <article class="content-body">-->
+        <!--                            <h2 class="title">{{items.first.ItemName}}</h2>-->
+        <!--                            <div class="rating-wrap my-3">-->
+        <!--                                <ul class="rating-stars">-->
+        <!--                                    <li style="width:80%" class="stars-active">-->
+        <!--                                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>-->
+        <!--                                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>-->
+        <!--                                        <i class="fa fa-star"></i>-->
+        <!--                                    </li>-->
+        <!--                                    <li>-->
+        <!--                                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>-->
+        <!--                                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>-->
+        <!--                                        <i class="fa fa-star"></i>-->
+        <!--                                    </li>-->
+        <!--                                </ul>-->
+        <!--                                <small class="label-rating text-muted">132 reviews</small>-->
+        <!--                                <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i> 154-->
+        <!--                                    orders-->
+        <!--                                </small>-->
+        <!--                            </div> &lt;!&ndash; rating-wrap.// &ndash;&gt;-->
+
+        <!--                            <div class="mb-3">-->
+        <!--                                <var class="price h4">${{items.first.ItemPrice}}.00</var>-->
+        <!--                                <span class="text-muted">/per kg</span>-->
+        <!--                            </div> &lt;!&ndash; price-detail-wrap .// &ndash;&gt;-->
+
+        <!--                            <p>{{items.first.ItemDescription}}</p>-->
+
+        <!--                            <dl class="row">-->
+        <!--                                <dt class="col-sm-3">Model#</dt>-->
+        <!--                                <dd class="col-sm-9">Odsy-1000</dd>-->
+
+        <!--                                <dt class="col-sm-3">Color</dt>-->
+        <!--                                <dd class="col-sm-9">Brown</dd>-->
+
+        <!--                                <dt class="col-sm-3">Delivery</dt>-->
+        <!--                                <dd class="col-sm-9">Russia, USA, and Europe</dd>-->
+        <!--                            </dl>-->
+
+        <!--                            <hr>-->
+        <!--                            <div class="form-row">-->
+        <!--                                <div class="form-group col-md flex-grow-0">-->
+        <!--                                    <label>Quantity</label>-->
+        <!--                                    <div class="input-group mb-3 input-spinner">-->
+        <!--                                        <div class="input-group-prepend">-->
+        <!--                                            <button class="btn btn-light" type="button" id="button-plus"> +</button>-->
+        <!--                                        </div>-->
+        <!--                                        <input type="text" class="form-control" value="1">-->
+        <!--                                        <div class="input-group-append">-->
+        <!--                                            <button class="btn btn-light" type="button" id="button-minus"> −</button>-->
+        <!--                                        </div>-->
+        <!--                                    </div>-->
+        <!--                                </div> &lt;!&ndash; col.// &ndash;&gt;-->
+        <!--                                {% if product.size_variant.count %}-->
+        <!--                                <div class="form-group col-md">-->
+        <!--                                    <label>Select size</label>-->
+        <!--                                    <div class="mt-1">-->
+        <!--                                        {% for size in product.size_variant.all %}-->
+
+        <!--                                        <label class="custom-control custom-radio custom-control-inline">-->
+        <!--                                            <input type="radio" name="select_size" checked=""-->
+        <!--                                                   class="custom-control-input">-->
+        <!--                                            <div class="custom-control-label">{{size.size_name}}</div>-->
+        <!--                                        </label>-->
+
+        <!--                                        {% endfor %}-->
+
+        <!--                                    </div>-->
+        <!--                                </div>-->
+        <!--                                {% endif %}-->
+        <!--                                &lt;!&ndash; col.// &ndash;&gt;-->
+        <!--                            </div> &lt;!&ndash; row.// &ndash;&gt;-->
+        <!--                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">-->
+        <!--                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/pagedetails">-->
+        <!--                                    Buy-->
+        <!--                                    now</a></div>-->
+        <!--                            </div>-->
+        <!--                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">-->
+        <!--                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/pagedetails">-->
+        <!--                                    Add to-->
+        <!--                                    cart</a></div>-->
+        <!--                            </div>-->
+        <!--                        </article> &lt;!&ndash; product-info-aside .// &ndash;&gt;-->
+        <!--                    </main> &lt;!&ndash; col.// &ndash;&gt;-->
+        <!--                </div> &lt;!&ndash; row.// &ndash;&gt;-->
+        <!--            </div> &lt;!&ndash; card.// &ndash;&gt;-->
         <!-- ============================ COMPONENT 1 END .// ================================= -->
     </div>
 </section>

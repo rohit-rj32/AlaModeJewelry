@@ -23,13 +23,19 @@ def index(request):
 
 
 def alamode(request):
-    items = ItemDetails.objects.filter(ItemAvailCount__gte=1)
+    items = ItemDetails.objects.all()
     print(items)
-    return render(request, "alamode.html", {"items": items})
+    if items:
+        return render(request, "alamode.html", {"items": items})
+    else:
+        return render(request, "alamode.html")
 
 
 def pagedetails(request, slug):
-    items = ItemDetails.objects.filter(ItemSlug__iexact=slug)
+    #Product.objects.get(slug=slug)
+    # we are using slug feature of django which uniquely identify the item.
+    # {%url 'pagedetails' item.ItemSlug %} this call is invoked from the alamode.html on click on quick view
+    items = ItemDetails.objects.get(ItemSlug=slug)
     return render(request, "productdetails.html", {"items": items})
 
 
@@ -74,7 +80,7 @@ def write_excel(filename, sheetname, dataframe):
 
 
 def dashboard(request):
-    xl_months = ("November_2023", "December_2023")
+    xl_months = ("November_2023", "December_2023", "January_2024")
     month_selection = request.POST.get("name_of_select")
     fetch_tracking = request.POST.get("fetch_tracking")
     print(fetch_tracking)
@@ -83,30 +89,16 @@ def dashboard(request):
         month_selection = "December_2023"
 
     if fetch_tracking is not None:
-        print("Fetching the tracking details of the orders")
-        df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
+        df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1')
         df_tmp = df.loc[(df['Status'] == 'Pending')]
-        print(df)
         for num in df_tmp['TrackingNumber']:
             result = getcourierdetails(num)
             print(result)
             if result == 0:
                 df.loc[df.TrackingNumber == num, 'Status'] = ['Delivered']
-                # df.loc[df['TrackingNumber'].isin(num), 'Status'] = ['Delivered']
-                # with pd.ExcelWriter("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), engine='openpyxl') as writer:
-                #     writer.book = load_workbook("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection))
-                #     writer.save()
-                #     df.to_excel(writer, "Sheet1", cols=['Status'])
-                # df.to_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
-        write_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1', df)
-        print(df)
-        # for row in df.loc[(df['Status'] == 'Pending')]:
-        #     print(row)
-        # if stat != 'Delivered':
-        #    print(df['TrackingNumber'])
-
-    df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet1')
-    df_expenses = pd.read_excel("C:\\Users\\Rohit\\Desktop\\{}.xlsx".format(month_selection), 'Sheet2')
+        write_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1', df)
+    df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1')
+    df_expenses = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet2')
 
     numOfEarrings, SellP, CostP, ExpenseAmount = df['NumOfEarrings'].sum(), df['SellP'].sum(), df['CostP'].sum(), \
                                                  df_expenses['ExpenseAmount'].sum()

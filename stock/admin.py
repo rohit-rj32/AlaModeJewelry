@@ -1,9 +1,18 @@
 from django.contrib import admin
-from .models import ItemDetails,Customer,Order
+from .models import ItemDetails, ItemColourOptions
 
 # Register your models here.
-admin.site.register(ItemDetails)
-admin.site.register(Customer)
-admin.site.register(Order)
+
+
+class ItemColourOptionsAdmin(admin.StackedInline):
+    model = ItemColourOptions
+
+
+class ItemDetailsAdmin(admin.ModelAdmin):
+    inlines = [ItemColourOptionsAdmin]
+
+
+admin.site.register(ItemDetails, ItemDetailsAdmin)
+admin.site.register(ItemColourOptions)
 
 
