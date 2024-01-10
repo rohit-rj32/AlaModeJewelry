@@ -7,11 +7,13 @@
         <div class="row">
             <div class="col-md-5">
                 <div class="main-img">
-                    <img class="img-fluid" src="/media/{{items.Item_images.first.ItemImage}}" alt="ProductS">
+                    <img id="main-image" class="img-fluid" src="/media/{{items.Item_images.first.ItemImage}}"
+                         alt="ProductS">
                     <div class="row my-3 previews">
                         {% for images in items.Item_images.all %}
                         <div class="col-md-3">
-                            <img class="w-100" src="/media/{{images.ItemImage}}" alt="Sale">
+                            <img class="w-100" src="/media/{{images.ItemImage}}" alt="Sale"
+                                 onclick="updatemainphoto(this);">
                         </div>
                         {% endfor %}
                     </div>
@@ -29,10 +31,32 @@
                     <p class="new-price text-bold mb-1"> Price: &#x20b9; {{items.ItemPrice}}.00</p>
                     <p class="text-secondary mb-1">(Additional Shipping charges may apply on checkout)</p>
                 </div>
+                <div>
+                    <p><b>Product Details:</b></p>
+                    <p>{{items.ItemDescription}}</p>
+                </div>
+                <div class="form-group">
+                    <p><b>Colour Options:</b>
+                        <select name='e_color_option' onchange="updateAvailablity(this)">
+                            <option value="Choose" selected>Choose an option</option>
+                            {% for item in items.Item_images.all %}
+                            <option value={{item.ItemColors}}>{{item.ItemColors}}</option>
+                            {% endfor %}
+                        </select>
+                        <hr>
+                        {% for item in items.Item_images.all %}
+                        {% if item.ItemAvailCount == 0 %}
+                            <p id={{item.ItemColors}} class="availablity_text" style="color:red;" hidden>SOLD OUT</p>
+                        {% else %}
+                            <p id={{item.ItemColors}} class="availablity_text" style="color:green;" hidden>Only {{ item.ItemAvailCount}} left in stock</p>
+                        {% endif %}
+                        {%endfor %}
+                </div>
                 <div class="buttons d-flex my-5">
-                    <a href="#" class="btn btn-outline-dark mt-auto"> Buy now </a>
+                    <input type="number" id="quantity_659eb96db11b4" name="quantity" value="1" aria-label="Product quantity" size="4" min="1" max="" step="1" placeholder="" inputmode="numeric" autocomplete="off">
                     <a>&nbsp;&nbsp;</a>
-                    <a data-item="{{items.ItemSlug}}" data-action="add" class="btn btn-outline-dark mt-auto update-cart"> <span class="text">Add to cart</span>
+                    <a data-item="{{items.ItemSlug}}" data-action="add"
+                       class="btn btn-outline-dark mt-auto update-cart"> <span class="text">Add to cart</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-cart"
                              viewBox="0 0 16 16">
@@ -40,21 +64,17 @@
                         </svg>
                     </a>
                 </div>
-                <div>
-                    <p><b>Product Details:</b></p>
-                    <p>{{items.ItemDescription}}</p>
-                </div>
-                <div>
-                    <p><b>Colour Options:</b>
-                    {% for item in items.Item_images.all %}
-                        {% if item.ItemAvailCount == 0 %}
-                        <s>{{item.ItemColors}},</s>
-                        {% else %}
-                        {{item.ItemColors}},
-                        {% endif %}
-                    {% endfor %}
-                    </p>
-                </div>
+                <!--                <div>-->
+                <!--                    <p><b>Colour Options:</b>-->
+                <!--                        {% for item in items.Item_images.all %}-->
+                <!--                        {% if item.ItemAvailCount == 0 %}-->
+                <!--                        <s>{{item.ItemColors}},</s>-->
+                <!--                        {% else %}-->
+                <!--                        {{item.ItemColors}},-->
+                <!--                        {% endif %}-->
+                <!--                        {% endfor %}-->
+                <!--                    </p>-->
+                <!--                </div>-->
 
             </div>
         </div>

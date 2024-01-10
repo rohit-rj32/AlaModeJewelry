@@ -137,6 +137,8 @@
         <form action="{% url 'dashboard' %}" method="post">
             {% csrf_token %}
             <input type="text" name="fetch_tracking" value="FT" hidden>
+            <input type="text" name="name_of_select" value="{{month_selection}}" hidden>
+            {{month_selection}}
             <i class="fa-solid fa-list fa-lg"></i> All Orders <button type="submit" class="btn btn-light" href="{% url 'dashboard' %}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes"
                      viewBox="0 0 16 16">

@@ -10,4 +10,7 @@ urlpatterns = [
     path('stockdetails', views.stockdetails, name="stockdetails"),
     path('dashboard', views.dashboard, name="dashboard"),
     path('pagedetails/<slug:slug>/', views.pagedetails, name="pagedetails"),
+    path('cartdetails', views.cartdetails, name="cartdetails"),
+    path('checkout', views.checkout, name="checkout"),
+
 ]

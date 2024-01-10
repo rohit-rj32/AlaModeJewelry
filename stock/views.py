@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .models import ItemDetails
 from .form import ItemsForm
 import pandas as pd
 from stock.scripts.trackparcel import getcourierdetails
+import math
 from openpyxl import load_workbook
 
 
@@ -24,19 +26,31 @@ def index(request):
 
 def alamode(request):
     items = ItemDetails.objects.all()
+    paginator = Paginator(items, 6)  # Show 25 contacts per page.
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     print(items)
     if items:
-        return render(request, "alamode.html", {"items": items})
+        return render(request, "alamode.html", {"items": page_obj})
     else:
         return render(request, "alamode.html")
 
 
 def pagedetails(request, slug):
-    #Product.objects.get(slug=slug)
+    # Product.objects.get(slug=slug)
     # we are using slug feature of django which uniquely identify the item.
     # {%url 'pagedetails' item.ItemSlug %} this call is invoked from the alamode.html on click on quick view
     items = ItemDetails.objects.get(ItemSlug=slug)
     return render(request, "productdetails.html", {"items": items})
+
+
+def cartdetails(request):
+    return render(request, "cartdetails.html")
+
+
+def checkout(request):
+    return render(request, "checkout.html")
 
 
 def orders(request):
@@ -83,26 +97,41 @@ def dashboard(request):
     xl_months = ("November_2023", "December_2023", "January_2024")
     month_selection = request.POST.get("name_of_select")
     fetch_tracking = request.POST.get("fetch_tracking")
-    print(fetch_tracking)
+    #print(fetch_tracking)
+    #print(month_selection)
 
     if month_selection is None:
-        month_selection = "December_2023"
+        month_selection = "January_2024"
 
     if fetch_tracking is not None:
-        df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1')
-        df_tmp = df.loc[(df['Status'] == 'Pending')]
+        df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), sheet_name=None)
+        df_tmp = df['Sheet1'].loc[(df['Sheet1']['Status'] != 'Delivered')]
         for num in df_tmp['TrackingNumber']:
-            result = getcourierdetails(num)
-            print(result)
-            if result == 0:
-                df.loc[df.TrackingNumber == num, 'Status'] = ['Delivered']
-        write_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1', df)
+            print("#######")
+            print(type(num))
+            if num == 'NotShipped':
+                print("ISNAN")
+                df['Sheet1'].loc[df['Sheet1'].TrackingNumber == num, 'Status'] = "NotShipped"
+            else:
+                result = getcourierdetails(num)
+                # print(result)
+                df['Sheet1'].loc[df['Sheet1'].TrackingNumber == num, 'Status'] = [result]
+        with pd.ExcelWriter("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection)) as writer:
+            for sheet, df in df.items():
+                df.to_excel(writer, sheet_name=sheet, index=False)
+            writer.save()
+            #df.to_excel(writer, sheet_name="Sheet1")
+        #write_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1', df)
+        #writer.save()
+        #writer.close()
+        df.iloc[0:0]
     df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1')
     df_expenses = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet2')
 
     numOfEarrings, SellP, CostP, ExpenseAmount = df['NumOfEarrings'].sum(), df['SellP'].sum(), df['CostP'].sum(), \
                                                  df_expenses['ExpenseAmount'].sum()
-    df.loc[len(df.index)] = ["Total: ", numOfEarrings, "-", "-", "-", CostP, SellP, "-"]
+    new_row = ["Total: ", numOfEarrings, " - ", " - ", " - ", CostP, SellP, " - "]
+    df = df.append(pd.Series(new_row, index=df.columns[:len(new_row)]), ignore_index=True)
     TotalEarnings, TotalExpenses = SellP - CostP, ExpenseAmount
     total_profit = TotalEarnings - TotalExpenses
     orders_data = df.to_html(classes='table table-striped table-hover table-bordered')
