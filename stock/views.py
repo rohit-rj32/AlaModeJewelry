@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from django.http import HttpResponse
 from .models import ItemDetails
 from .form import ItemsForm
-import pandas as pd
 from stock.scripts.trackparcel import getcourierdetails
+from .utils import cookieCart
+import pandas as pd
+
+import requests
+import ast
 import math
 from openpyxl import load_workbook
 
@@ -46,7 +49,16 @@ def pagedetails(request, slug):
 
 
 def cartdetails(request):
-    return render(request, "cartdetails.html")
+    #slug = 'kalash-earrings'
+    #items = ItemDetails.objects.get(ItemName__icontains='jumkas')
+    data = cookieCart(request)
+    print(data)
+
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+
+    return render(request, "cartdetails.html", {"items": items, "order": order, "cartItems": cartItems})
 
 
 def checkout(request):
@@ -109,9 +121,9 @@ def dashboard(request):
         for num in df_tmp['TrackingNumber']:
             print("#######")
             print(type(num))
-            if num == 'NotShipped':
+            if num == 'ReadyToDispatch':
                 print("ISNAN")
-                df['Sheet1'].loc[df['Sheet1'].TrackingNumber == num, 'Status'] = "NotShipped"
+                df['Sheet1'].loc[df['Sheet1'].TrackingNumber == num, 'Status'] = "ReadyToDispatch"
             else:
                 result = getcourierdetails(num)
                 # print(result)

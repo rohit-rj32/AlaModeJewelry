@@ -8,10 +8,11 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" src="{% static 'css/main.css' %}">
     <title>Welcome to Ala Mode</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item active">
@@ -40,25 +41,37 @@
             </li>
         </ul>
         <div class="nav-item ms-auto">
-<!--            <a  style="float:right; margin:5px;" class="btn btn-outline-dark" href="{% url 'checkout' %}" >Checkout</a>-->
-            <a class="btn btn-secondary" type='submit' name="Fetch" href="{% url 'cartdetails'%}">
-                <svg xmlns="http://www.w3.org/2000/svg" width=18 height="18" fill="currentColor"
-                     class="bi bi-cart"
-                     viewBox="0 0 16 16">
-                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                </svg> <span class="badge badge-pill badge-secondary notify" id="cartcount">0</span>
-            </a>
+            <form class="d-flex">
+                <a href="{% url 'cartdetails'%}" class="btn btn-outline-dark"><i class="bi-cart-fill me-1"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width=18 height="18" fill="currentColor"
+                         class="bi bi-cart"
+                         viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                    </svg>
+                    Cart
+                    <span class="badge bg-dark text-white ms-1 rounded-pill" id="cartcount">{{ cart|length }}</span>
+                </a>
+            </form>
+            <!--            <a  style="float:right; margin:5px;" class="btn btn-outline-dark" href="{% url 'checkout' %}" >Checkout</a>-->
+<!--            <a class="btn btn-secondary" type='submit' name="Fetch" href="{% url 'cartdetails'%}">-->
+<!--                <svg xmlns="http://www.w3.org/2000/svg" width=18 height="18" fill="currentColor"-->
+<!--                     class="bi bi-cart"-->
+<!--                     viewBox="0 0 16 16">-->
+<!--                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>-->
+<!--                </svg>-->
+<!--                <span class="badge badge-pill badge-secondary notify" id="cartcount">0</span>-->
+<!--            </a>-->
         </div>
-        <div class="ms-auto dropdown">
-            <a class="nav-item dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                My Account
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Profile</a>
-                <a class="dropdown-item" href="#">Points</a>
-            </div>
-        </div>
+<!--        <div class="ms-auto dropdown">-->
+<!--            <a class="nav-item dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button"-->
+<!--               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                My Account-->
+<!--            </a>-->
+<!--            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">-->
+<!--                <a class="dropdown-item" href="#">Profile</a>-->
+<!--                <a class="dropdown-item" href="#">Points</a>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </nav>
 <!--<div class="container">-->

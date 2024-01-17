@@ -12,7 +12,7 @@
                     <div class="row my-3 previews">
                         {% for images in items.Item_images.all %}
                         <div class="col-md-3">
-                            <img class="w-100" src="/media/{{images.ItemImage}}" alt="Sale"
+                            <img class="w-100" id="{{images.ItemColors}}" src="/media/{{images.ItemImage}}" alt="Sale"
                                  onclick="updatemainphoto(this);">
                         </div>
                         {% endfor %}
@@ -43,26 +43,33 @@
                             <option value={{item.ItemColors}}>{{item.ItemColors}}</option>
                             {% endfor %}
                         </select>
-                        <hr>
-                        {% for item in items.Item_images.all %}
-                        {% if item.ItemAvailCount == 0 %}
-                            <p id={{item.ItemColors}} class="availablity_text" style="color:red;" hidden>SOLD OUT</p>
-                        {% else %}
-                            <p id={{item.ItemColors}} class="availablity_text" style="color:green;" hidden>Only {{ item.ItemAvailCount}} left in stock</p>
-                        {% endif %}
-                        {%endfor %}
+                    <hr>
+                    {% for item in items.Item_images.all %}
+                    {% if item.ItemAvailCount == 0 %}
+                    <p id=availablity_text_{{item.ItemColors}} class="availablity_text" style="color:red;" value="0"
+                       hidden>SOLD OUT</p>
+                    <input type="number" value="0" class="availablity_text_{{item.ItemColors}}" hidden/>
+                    {% else %}
+                    <p id=availablity_text_{{item.ItemColors}} class="availablity_text" style="color:green;"
+                       value={{item.ItemAvailCount}} hidden>Only {{ item.ItemAvailCount}} left in stock</p>
+                    <input type="number" value={{ item.ItemAvailCount}} class="availablity_text_{{item.ItemColors}}" hidden/>
+                    {% endif %}
+                    {%endfor %}
                 </div>
                 <div class="buttons d-flex my-5">
-                    <input type="number" id="quantity_659eb96db11b4" name="quantity" value="1" aria-label="Product quantity" size="4" min="1" max="" step="1" placeholder="" inputmode="numeric" autocomplete="off">
+                    <input type="number" id="quantity_659eb96db11b2" name="quantity" value="1"
+                           aria-label="Product quantity" size="4" min="1" max="" step="1" placeholder=""
+                           inputmode="numeric" autocomplete="off" disabled>
                     <a>&nbsp;&nbsp;</a>
-                    <a data-item="{{items.ItemSlug}}" data-action="add"
-                       class="btn btn-outline-dark mt-auto update-cart"> <span class="text">Add to cart</span>
+                    <a id="add_to_cart_pd" data-item="{{items.ItemSlug}}" data-action="add" data-color="xxxx"
+                       class="btn btn-outline-dark mt-auto update-cart" style="pointer-events: none"> <span class="text" >Add to cart</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-cart"
                              viewBox="0 0 16 16">
                             <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                         </svg>
                     </a>
+                    <p id="add_to_cart_info" class="text-secondary mb-1">(Please select the colour option)</p>
                 </div>
                 <!--                <div>-->
                 <!--                    <p><b>Colour Options:</b>-->
