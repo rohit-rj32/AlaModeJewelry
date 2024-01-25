@@ -11,10 +11,13 @@ def getcourierdetails(trackingid):
     print(trackingid)
     headers = {"accept": "application/json, text/javascript, text/html, application/xml, text/xml, */*"}
     print(url.format(trackingid=trackingid))
-    resp = requests.get(url.format(trackingid=trackingid), headers=headers)
-    #print(resp)
-    data = resp.json()
-    print(data['data']['status_external'])
-    return data['data']['status_external']
+    try:
+        resp = requests.get(url.format(trackingid=trackingid), headers=headers)
+        data = resp.json()
+        return data['data']['status_external']
+    except Exception as e:
+        print(e)
+        return "NotFound"
+
 
 #getcourierdetails("NaN")

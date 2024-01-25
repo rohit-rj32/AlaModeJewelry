@@ -1,15 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from .models import ItemDetails
 from .form import ItemsForm
 from stock.scripts.trackparcel import getcourierdetails
 from .utils import cookieCart
 import pandas as pd
-
-import requests
-import ast
-import math
-from openpyxl import load_workbook
 
 
 # Create your views here.
@@ -28,24 +23,34 @@ def index(request):
 
 
 def alamode(request):
+    # FIXME: improve this block of code to show the cart items value in better approach
+    data = cookieCart(request)
+    order = data['order']
+
+
     items = ItemDetails.objects.all()
     paginator = Paginator(items, 6)  # Show 25 contacts per page.
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     print(items)
+    # {"items": items, "order": order, "cartItems": cartItems, "cart": cart}
     if items:
-        return render(request, "alamode.html", {"items": page_obj})
+        return render(request, "alamode.html", {"items": page_obj, "order": order})
     else:
         return render(request, "alamode.html")
 
 
 def pagedetails(request, slug):
-    # Product.objects.get(slug=slug)
+    # FIXME: improve this block of code to show the cart items value in better approach
+    data = cookieCart(request)
+    order = data['order']
+
+    # INFO: Product.objects.get(slug=slug)
     # we are using slug feature of django which uniquely identify the item.
     # {%url 'pagedetails' item.ItemSlug %} this call is invoked from the alamode.html on click on quick view
     items = ItemDetails.objects.get(ItemSlug=slug)
-    return render(request, "productdetails.html", {"items": items})
+    return render(request, "productdetails.html", {"items": items, "order": order})
 
 
 def cartdetails(request):
@@ -57,12 +62,28 @@ def cartdetails(request):
     cartItems = data['cartItems']
     order = data['order']
     items = data['items']
+    cart = data['cart']
+    #request.set_cookie(cart, value=cart)
+    print(type(cart))
+    request.COOKIES['cart'] = cart
+    print("######")
+    print(type(request.COOKIES['cart']))
+    print(request.COOKIES['cart'])
+    #r2 = requests.post('http://www.yourapp.com/somepage', cookies=r1.cookies)
 
-    return render(request, "cartdetails.html", {"items": items, "order": order, "cartItems": cartItems})
+    response = render(request, "cartdetails.html", {"items": items, "order": order, "cartItems": cartItems, "cart": cart})
+    print(response)
+    #response.set_cookie('cart', cart)
+    return response
 
 
 def checkout(request):
-    return render(request, "checkout.html")
+    data = cookieCart(request)
+    print(data)
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+    return render(request, "checkout.html", {"items": items, "order": order, "cartItems": cartItems})
 
 
 def orders(request):
@@ -71,7 +92,6 @@ def orders(request):
 
 def reports(request):
     return render(request, "reports.html")
-
 
 def addstock(request):
     if request.method == "POST":
@@ -153,3 +173,16 @@ def dashboard(request):
                                               "expenses_data": expenses_data, "total_profit": total_profit,
                                               "month_selection": month_selection,
                                               "xl_months": xl_months})
+
+
+def processorder(request):
+    print("processing order")
+    # if order placed successfully
+
+    return redirect('ordercompleted')
+    # else if issue with placing order redirect to failure page.
+
+
+def ordercompleted(request):
+    return render(request, "ordercompleted.html")
+

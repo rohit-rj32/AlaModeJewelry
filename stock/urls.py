@@ -12,5 +12,9 @@ urlpatterns = [
     path('pagedetails/<slug:slug>/', views.pagedetails, name="pagedetails"),
     path('cartdetails', views.cartdetails, name="cartdetails"),
     path('checkout', views.checkout, name="checkout"),
+    path('ordercompleted', views.ordercompleted, name="ordercompleted"),
+    path('processorder', views.processorder, name="processorder"),
+
+
 
 ]

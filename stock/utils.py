@@ -21,14 +21,16 @@ def cookieCart(request):
         for color in cart[earring_name].keys():
             print("Color {}".format(color))
             if cart[earring_name][color]['quantity'] > 0:
-                cartItems += cart[earring_name][color]['quantity']
-                print("cartItems {}".format(cartItems))
+
                 item = ItemDetails.objects.get(ItemSlug=earring_name)
                 item_color = item.Item_images.get(ItemColors=color)
                 quantity_in_cart = cart[earring_name][color]['quantity']
                 quantity_avail_stock = item_color.ItemAvailCount
                 if quantity_in_cart > quantity_avail_stock:
                     quantity_in_cart = quantity_avail_stock
+                    cart[earring_name][color]['quantity'] = quantity_in_cart
+                cartItems += cart[earring_name][color]['quantity']
+                print("cartItems {}".format(cartItems))
                 print("item {}".format(item))
                 total = total + (item.ItemPrice * quantity_in_cart)
                 print("total,quantity_in_cart {},{}".format(total, quantity_in_cart))
@@ -54,5 +56,7 @@ def cookieCart(request):
         #             order['shipping'] = True
         # except:
         #     pass
-
-    return {'cartItems': cartItems, 'order': order, 'items': items}
+        print("$$$$$$$$")
+        print(cart)
+        request.COOKIES['cart'] = cart
+    return {'cartItems': cartItems, 'order': order, 'items': items, 'cart': cart }
