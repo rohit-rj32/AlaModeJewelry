@@ -61,6 +61,30 @@ class Order(models.Model):
     status = models.CharField(max_length=50, null=True, choices=STATUS)
 
 
+class Order(models.Model):
+    STATUS = (
+        ('Pending', 'Pending'),
+        ('Out for delivery', 'Out for delivery'),
+        ('Delivered', 'Delivered'),
+    )
+
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
+    item = models.ForeignKey(ItemDetails, null=True, on_delete=models.SET_NULL)
+    quantity = models.IntegerField(default=1)
+    price = models.IntegerField()
+    address = models.CharField(max_length=200, default='', blank=True)
+    phone = models.CharField(max_length=50, default='', blank=True)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    status = models.CharField(max_length=50, null=True, choices=STATUS)
+
+    def placeOrder(self):
+        self.save()
+
+    @staticmethod
+    def get_orders_by_customer(customer_id):
+        return Order.objects.filter(customer=customer_id).order_by('-date')
+
+
 class Expenses(models.Model):
     name = models.CharField(max_length=20, null=True)
     amount = models.IntegerField(null=True)

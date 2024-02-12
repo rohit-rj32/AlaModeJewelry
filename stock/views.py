@@ -33,7 +33,7 @@ def alamode(request):
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    print(items)
+    # print(items)
     # {"items": items, "order": order, "cartItems": cartItems, "cart": cart}
     if items:
         return render(request, "alamode.html", {"items": page_obj, "order": order})
@@ -53,26 +53,58 @@ def pagedetails(request, slug):
     return render(request, "productdetails.html", {"items": items, "order": order})
 
 
-def cartdetails(request):
-    #slug = 'kalash-earrings'
-    #items = ItemDetails.objects.get(ItemName__icontains='jumkas')
-    data = cookieCart(request)
-    print(data)
+def delcartitem(request):
+    # FIXME: improve this block of code to show the cart items value in better approach
+    # data = cookieCart(request)
+    itemname = request.POST.get("ItemToDelete")
+    itemcolor = request.POST.get("ItemColor")
+    print("delcart view")
+    print(itemname)
+    print(itemcolor)
+    # cartItems = data['cartItems']
+    # order = data['order']
+    # items = data['items']
+    # cart = data['cart']
+    # print(items)
+    data = delItemFromCart(request)
+    # print("*****")
+    # print(data)
+    # print("*****")
+    request.COOKIES['cart'] = data['cart']
 
     cartItems = data['cartItems']
     order = data['order']
     items = data['items']
     cart = data['cart']
-    #request.set_cookie(cart, value=cart)
-    print(type(cart))
+    # print("***** items")
+    # print(items)
+    # print("***** items")
+    response = render(request, "cartdetails.html", {"items": items, "order": order, "cartItems": cartItems, "cart": cart})
+    return response
+
+
+def cartdetails(request):
+    #slug = 'kalash-earrings'
+    #items = ItemDetails.objects.get(ItemName__icontains='jumkas')
+    data = cookieCart(request)
+    #print(data)
+
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+    cart = data['cart']
+    # request.set_cookie(cart, value=cart)
+    # print(type(cart))
     request.COOKIES['cart'] = cart
-    print("######")
-    print(type(request.COOKIES['cart']))
-    print(request.COOKIES['cart'])
+    # print("######")
+    # print(type(request.COOKIES['cart']))
+    # print(request.COOKIES['cart'])
     #r2 = requests.post('http://www.yourapp.com/somepage', cookies=r1.cookies)
 
     response = render(request, "cartdetails.html", {"items": items, "order": order, "cartItems": cartItems, "cart": cart})
-    print(response)
+    # session = requests.Session()
+    # print(session.cookies.get_dict())
+    # print(response)
     #response.set_cookie('cart', cart)
     return response
 
@@ -115,34 +147,28 @@ def stockdetails(request):
 
 def write_excel(filename, sheetname, dataframe):
     with pd.ExcelWriter(filename, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-        workBook = writer.book
-        # try:
-        #     workBook.remove(workBook[sheetname])
-        # except:
-        #     print("Worksheet does not exist")
-        # finally:
         dataframe.to_excel(writer, sheet_name=sheetname, index=False)
         writer.save()
 
 
 def dashboard(request):
-    xl_months = ("November_2023", "December_2023", "January_2024")
+    xl_months = ("November_2023", "December_2023", "January_2024", "February_2024")
     month_selection = request.POST.get("name_of_select")
     fetch_tracking = request.POST.get("fetch_tracking")
     #print(fetch_tracking)
     #print(month_selection)
 
     if month_selection is None:
-        month_selection = "January_2024"
+        month_selection = "February_2024"
 
     if fetch_tracking is not None:
         df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), sheet_name=None)
         df_tmp = df['Sheet1'].loc[(df['Sheet1']['Status'] != 'Delivered')]
         for num in df_tmp['TrackingNumber']:
-            print("#######")
-            print(type(num))
+            # print("#######")
+            # print(type(num))
             if num == 'ReadyToDispatch':
-                print("ISNAN")
+                # print("ISNAN")
                 df['Sheet1'].loc[df['Sheet1'].TrackingNumber == num, 'Status'] = "ReadyToDispatch"
             else:
                 result = getcourierdetails(num)
@@ -159,7 +185,6 @@ def dashboard(request):
         df.iloc[0:0]
     df = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet1')
     df_expenses = pd.read_excel("C:\\Users\\Rohit\\Desktop\\AlaMode\\{}.xlsx".format(month_selection), 'Sheet2')
-
     numOfEarrings, SellP, CostP, ExpenseAmount = df['NumOfEarrings'].sum(), df['SellP'].sum(), df['CostP'].sum(), \
                                                  df_expenses['ExpenseAmount'].sum()
     new_row = ["Total: ", numOfEarrings, " - ", " - ", " - ", CostP, SellP, " - "]
@@ -179,8 +204,19 @@ def processorder(request):
     print("processing order")
     # if order placed successfully
 
-    return redirect('ordercompleted')
+    customeraddress = request.POST.get('address')
+    customerphone = request.POST.get('phone')
+    customername = request.POST.get('name')
+    customeremail = request.POST.get('email')
+    customerpincode = request.POST.get('pincode')
+    cart = request.COOKIES['cart']
+
+    #create a order in the Order model with details then redirect to success.
+    print("VALUE: {} {} {} {} {} {} ".format(customeraddress, customerphone, customername, customeremail, customerpincode, cart))
+
     # else if issue with placing order redirect to failure page.
+    return redirect('ordercompleted')
+
 
 
 def ordercompleted(request):
